@@ -1,18 +1,33 @@
 <template>
     <div class="hero">
-        <div class="hero-container">
+        <div class="nav-block"></div>
 
-            <div class="left-hero-container">
-                <h1>{{ leftTitle }}</h1>
-                <h3>{{ subTitle }}</h3>
+        <div class="hero-container">
+            <div class="title">
+                <h1>{{ title }}</h1>
             </div>
 
-            <div class="right-hero-container">
-                <h1>{{ rightTitle }}</h1>
-
+            <div class="taco-container">
                 <img class="taco" :src="taco" :alt="tacoAlt" :title="tacoTitle">
-                <img class="lime" :src="lime" :alt="limeAlt" :title="limeTitle">
                 <img class="cilantro" :src="cilantro" :alt="cilantroAlt" :title="cilantroTitle">
+                <img class="lime" :src="lime" :alt="limeAlt" :title="limeTitle">
+            </div>
+
+            <div class="info-container">
+                <div class="message">
+                    <p>{{ message }}</p>
+                </div>                 
+                <div class="hours">
+                    <p>{{ address1 }}</p>
+                    <p>{{ address2 }}</p>
+                </div>
+                <div class="hours">
+                    <p>{{ hours1 }}</p>
+                    <p>{{ hours2 }}</p>
+                </div>
+                <div class="phone">
+                    <p>{{ phone }}</p>
+                </div>
             </div>
         </div>
         
@@ -54,14 +69,17 @@
             </div>
         </Transition>
 
-        <div class="expand-circle" :style="{width: `${finalCircleSize}px`, height: `${finalCircleSize}px`}"></div>
+        <div 
+            class="expand-circle" 
+            ref="expandCircle"
+            :style="{width: `${finalCircleSize}px`, height: `${finalCircleSize}px`}"
+        >
+        </div>
 
         <div 
             class="empty-space"
             ref="emptySpace"
         >
-            <div></div>
-            <div></div>
         </div>
     </div>
 
@@ -72,8 +90,7 @@
 import { ref, onMounted } from 'vue';
 
 let props = defineProps({
-    leftTitle: String,
-    rightTitle: String,
+    title: String,
     subTitle: String,
 
     ctaImg: String,
@@ -92,6 +109,13 @@ let props = defineProps({
     cilantro: String,
     cilantroAlt: String,
     cilantroTitle: String,
+
+    message: String,
+    address1: String,
+    address2: String,
+    hours1: String,
+    hours2: String,
+    phone: String,
 })
 
 let emptySpace = ref(null),
@@ -103,6 +127,8 @@ let ctaContainer = ref(null),
     ctaActive = ref(true),
     ctaText = ref(null);
 
+let expandCircle = ref(null);
+
 // Get the scroll progress of the empty div
 // As users scroll => get the scroll % of progress from the bounding client Y. Use that % as progress to the targetCircleSize
 // As the user scrolls => circle effect gets bigger until it reaches the end
@@ -110,7 +136,6 @@ let getScrollProgress = (div) => {
     if (div){
         scrollPercentage.value = ((Math.abs(div.getBoundingClientRect().y - window.innerHeight))/div.offsetHeight);
         finalCircleSize.value = targetCircleSize * scrollPercentage.value;
-        console.log(scrollPercentage.value);
         // Remove/add back the CTA tortilla when users scroll past or come back to the hero 
         if (div.getBoundingClientRect().y < 0){
             ctaActive.value = false;
@@ -123,6 +148,12 @@ let getScrollProgress = (div) => {
         } else {
             ctaText.value.style.fill = "var(--text-color-white)";
         }
+        // Remove expandCircle by decreasing the z-index once at the new section
+        if (scrollPercentage.value > 1.8){
+            expandCircle.value.style.zIndex = -100;
+        } else {
+            expandCircle.value.style.zIndex = 1;
+        }
     }
 }
 
@@ -134,74 +165,80 @@ onMounted(() => {
 
 <style scoped>
 h1{
-    text-align: center;
-}
-h3{
-    padding-inline: var(--padding-sides);
-}
-h4{
     color: var(--text-color-white);
-    text-align: center;
-    margin: 0;
+    padding-block: 0;
+}
+.nav-block{
+    height: 100px;
+    background-color: var(--bkg-color-red-full-opacity);
+}
+.hero-container{
+    display: grid;
+    grid-template-rows: 4fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+        "one two"
+        "three three";
+    height: 100vh;
+    background-color: var(--bkg-color-red-full-opacity);
+    padding-inline: var(--padding-inline);
+}
+.title{
+    grid-area: one;
+}
+.taco-container{
+    grid-area: two;
+    position: relative;
+}
+.info-container{
+    grid-area: three;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    justify-items: center;
+    gap: 50px;
+    color: var(--text-color-white);
+}
+.info-container p{
+    display: block;
+}
+.taco{
+    position: absolute;
+    top: 35%;
+    left: 75%;
+    transform: translate(-75%, -35%);
+    z-index: 10;
+    width: clamp(20rem, 35vw, 35rem);
+}
+.cilantro{
+    position: absolute;
+    top: 85%;
+    left: 20%;
+    transform: translate(-20%, -85%);
+    width: clamp(5rem, 10vw, 15rem);
+    z-index: 11;
+}
+.lime{
+    position: absolute;
+    top: 95%;
+    left: 90%;
+    transform: translate(-90%, -95%);
+    z-index: 11;
+    width: clamp(5rem, 10vw, 15rem);
+}
+.subtitle{
+    color: var(--text-color-white);
+    font-family: var(--font-family-p);
 }
 
 .empty-space{
     height: 100dvh;
-    display: flex;
-}
-.empty-space > div{
-    height: 100%;
-    width: 50%;
-}
-.empty-space > div:nth-child(1){
-    background-color: var(--bkg-color-green-full-opacity);
-}
-.empty-space > div:nth-child(2){
     background-color: var(--bkg-color-red-full-opacity);
-}
-.hero-container{
-    height: 100dvh;
-    width: 100%;
-    display: flex;
-    position: relative;
-}
-.left-hero-container, 
-.right-hero-container{
-    width: 50%;
-    color: var(--text-color-white);
-}
-
-
-.left-hero-container{
-    background-color: var(--bkg-color-green-full-opacity);
-}
-.right-hero-container{
-    position: relative;
-    background-color: var(--bkg-color-red-full-opacity);
-}
-.right-hero-container img{
-    position: absolute;
-}
-.taco{
-    inset: 0;
-    margin: auto;
-    width: clamp(300px, 25vw, 600px);
-}
-.cilantro{
-    top: 85%;
-    left: 20%;
-    transform: translate(-20%, -85%);
-}
-.lime{
-    top: 90%;
-    left: 80%;
-    transform: translate(-80%, -90%);
 }
 
 .cta-container{
     position: fixed;
-    width: 400px;
-    height: 400px;
+    width: clamp(20rem, 30vw, 25rem);
+    height: clamp(20rem, 30vw, 25rem);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -212,15 +249,15 @@ h4{
     position: absolute;
     inset: 0;
     margin: auto;
-    width: 200px;
-    height: 200px;
+    width: clamp(10rem, 16vw, 12.5rem);
+    height: clamp(10rem, 16vw, 12.5rem);
 }
 .cta-message{
     position: absolute;
     animation: spinClockwise 10s linear infinite;
 }
 .cta-message text{
-    font-size: var(--font-size-h4);
+    font-size: var(--font-size-h5);
     font-family: var(--font-family-h);
     fill: var(--text-color-white);
     transition: fill 0.3s ease;
@@ -255,6 +292,36 @@ h4{
 @keyframes spinClockwise{
     0% {transform: rotate(0deg);}
     100% {transform: rotate(360deg);}
+}
+
+@media only screen and (max-width: 1024px){
+    .hero-container{
+        grid-template-rows: 1fr 3fr 1fr;
+        grid-template-columns: unset;
+        grid-template-areas: 
+            "one"
+            "two"
+            "three";
+    }
+    .taco{
+        top: 25%;
+        left: 5%;
+        transform: translate(-5%, -25%);
+    }
+    .cilantro{
+        top: 50%;
+        left: 70%;
+        transform: translate(-70%, -50%);
+    }
+    .lime{
+        top: 35%;
+        left: 90%;
+        transform: translate(-90%, -35%);
+    }
+
+}
+@media only screen and (max-width: 768px){
+
 }
 
 

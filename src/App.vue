@@ -4,12 +4,45 @@
 
     :instagram="instagram"
     :email="email"
+    :cta-menu="require('@/assets/imgs/tortilla.png')"
   />
   <router-view/>
 </template>
 
 <script setup>
 import Nav from './components/Nav.vue';
+import { ref, provide, onMounted } from 'vue';
+
+// let isDesktop = ref(false),
+//     isTablet = ref(false),
+//     isMobile = ref(false);
+
+// let checkScreenSize = () => {
+//   if (window.innerWidth > 1024){
+//     isDesktop.value = true;
+//     isTablet.value = false;
+//     isMobile.value = false;
+//   }
+//   else if (window.innerWidth == 1024 && window.innerWidth > 768){
+//     isDesktop.value = false;
+//     isTablet.value = true;
+//     isMobile.value = false;
+//   }
+//   else if (window.innerWidth <= 768){
+//     isDesktop.value = false;
+//     isTablet.value = false;
+//     isMobile.value = true;
+//   }
+// }
+
+// checkScreenSize();
+
+// provide('isDesktop', isDesktop.value);
+// provide('isTablet', isTablet.value);
+// provide('isMobile', isMobile.value);
+
+
+
 
 let logo = `
     <svg width="50" height="42" viewBox="0 0 50 42" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,6 +61,10 @@ let logo = `
     <path d="M27.5 7.57817C27.5 6.18884 26.375 5.05212 25 5.05212H5C3.625 5.05212 2.5 6.18884 2.5 7.57817V22.7344C2.5 24.1237 3.625 25.2605 5 25.2605H25C26.375 25.2605 27.5 24.1237 27.5 22.7344V7.57817ZM25 7.57817L15 13.8933L5 7.57817H25ZM25 22.7344H5V10.1042L15 16.4193L25 10.1042V22.7344Z" />
     </svg>`; 
 
+// onMounted(() => {
+//   window.addEventListener('resize', () => {checkScreenSize();}); 
+  
+// })
 </script>
 
 <style>
@@ -52,9 +89,10 @@ html {
 }
 body {
   margin: 0;
+  background-color: var(--bkg-color-general);
 }
 html, body{
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 a{
   text-decoration: none;
@@ -71,10 +109,11 @@ h1, h2, h4, h5{
 
 h1{
   font-size: var(--font-size-h1);
-  padding-block: var(--padding-block-h1);
+  padding-block: var(--padding-block-header);
 }
 h2{
   font-size: var(--font-size-h2);
+  padding-block: var(--padding-block-header);
 }
 h3{
   font-size: var(--font-size-h3);
@@ -83,34 +122,152 @@ h3{
 h4{
   font-size: var(--font-size-h4);
 }
+h5{
+  font-size: var(--font-size-h5);
+}
 p{
   font-family: var(--font-family-p);
+  font-size: var(--font-size-p);
 
 }
-.char{
-    position: absolute;
-    transform-origin: 0px 250px;
+button{
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
 }
+.char{
+  position: absolute;
+  transform-origin: 0px 250px;
+}
+
+.highlighted-text{
+  position: relative;
+  padding: var(--padding-highlighted-text);
+}
+.highlight-front-bkg,
+.highlight-back-bkg{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0%;
+  left: 0%;
+  border-radius: var(--border-radius-header-highlights);
+}
+.highlight-front-bkg{
+  background-color: var(--bkg-color-red-full-opacity);
+  z-index: -1;
+}
+.highlight-back-bkg{
+  background-color: var(--bkg-color-red-low-opacity);
+  top: 10%;
+  left: 5%;
+  z-index: -2;
+  transition: 0.3s all ease;
+}
+/*
+ * CTA
+ * GREEN BUTTON
+ */
+.cta{
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+.cta-green-btn{
+    position: relative;
+    border: none;
+    color: var(--text-color-white);
+    padding: var(--padding-button);
+    background-color: transparent;
+    cursor: pointer;
+}
+.cta-green-btn span{
+    position: absolute;
+    width: 100%;
+    height: 100%; 
+    border-radius: var(--border-radius-button);
+}
+.cta-green-btn-main-bkg{
+    background-color: var(--bkg-color-green-full-opacity);
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+.cta-green-btn-back-bkg{
+    background-color: var(--bkg-color-green-low-opacity);
+    top: 15%;
+    left: 5%;
+    z-index: -2;
+    transition: all 0.3s ease;
+}
+.cta-green-btn:hover .cta-green-btn-back-bkg{
+    top: 0;
+    left: 0;
+}
+.cta img{
+    width: clamp(2rem, 3vw, 10rem);
+    height: clamp(2rem, 3vw, 10rem);
+    animation: spin 5s infinite linear;
+}
+@keyframes spin{
+    0% {transform: rotate(0deg)}
+    100% {transform: rotate(-360deg)}
+}
+
 :root{
   --font-family-h: 'Rampart One', cursive;
   --font-family-p: 'BioRhyme', serif;
 
-  --font-size-h1: clamp(10rem, 10vw, 30rem);
-  --font-size-h2: clamp(8rem, 9vw, 20rem);
-  --font-size-h3: clamp(6rem, 5vw, 10rem);
-  --font-size-h4: clamp(30px, 7vw, 50px);
-  --font-size-p: clamp(14px, 2vw, 16px);
+  --font-size-h1: clamp(5rem, 10vw, 30rem);
+  --font-size-h2: clamp(4.5rem, 6vw, 20rem);
+  --font-size-h3: clamp(4rem, 5vw, 10rem);
+  --font-size-h4: clamp(3.5rem, 4vw, 15rem);
+  --font-size-h5: clamp(2.5rem, 3vw, 5rem);
+  --font-size-p: clamp(0.9rem, 1.1vw, 2rem);
   --font-size-button-text: clamp(16px, 3vw, 20px);
 
   --text-color-white: #ffffff; 
   --text-color-black: #000000; 
 
-  --bkg-color-general: #FFE3AE;
+  --bkg-color-general: #fff0ba;
   --bkg-color-green-full-opacity: rgb(97, 141, 4);
+  --bkg-color-green-low-opacity: rgba(97, 141, 4, 0.5);
   --bkg-color-red-full-opacity: rgb(193, 58, 40);
+  --bkg-color-red-low-opacity: rgba(193, 58, 40, 0.5);
+  --bkg-color-lime-full-opacity: rgba(179, 202, 50);
+  --bkg-color-lime-low-opacity: rgba(179, 202, 50, 0.5);
 
-  --padding-sides: 50px;
-  --padding-block-h1: 50px;
+  --padding-inline: 50px;
+  --padding-block-header: 100px;
+  --padding-highlighted-text: 0px 10px 0px 10px;
+  --padding-button: 10px;
+  --padding-general: 10px;
+
+  --border-radius-button: 10px;
+  --border-radius-img: 50px;
+  --border-radius-header-highlights: 50px;
+  --border-radius-bkg: 50px;
+  --border-radius-scrollbar: 10px;
+
+  --svg-color-yellow: #ECBC0B;
+
+  --path-outline-black: #000000;
+}
+@media only screen and (max-width: 1024px){
+  :root{
+    --padding-block-h1: 25px;
+    --padding-inline: 10px;
+    --padding-button: 5px;
+
+    --border-radius-header-highlights: 25px;
+    --border-radius-img: 25px;
+  }
+
+  .cta-green-btn-back-bkg{
+    top: 5%;
+  }
+}
+@media only screen and (max-width: 768px){
 }
 
 </style>
